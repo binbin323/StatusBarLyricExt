@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# opencc4j uses reflection (Class.newInstance()) to load conversion implementations.
+# R8 would otherwise obfuscate/remove these classes and cause InstantiationException at runtime.
+-keep class com.github.houbb.** { *; }
+-dontwarn com.github.houbb.**

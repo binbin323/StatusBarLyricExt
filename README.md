@@ -2,7 +2,8 @@
 
 这个工具可以为使用 [MediaSession](https://developer.android.google.cn/reference/android/media/session/MediaSession) 的音乐播放器添加状态栏歌词功能
 
-目前仅支持 [Flyme](https://www.flyme.com/) 和 [exTHmUI](https://www.exthmui.cn/) 的状态栏歌词功能
+支持的ROM:
+- 使用 FLAG_ALWAYS_SHOW_TICKER 和 FLAG_ONLY_UPDATE_TICKER 来检测ROM是否支持状态栏歌词
 
 ## 原理
 - 通过 [MediaController](https://developer.android.google.cn/reference/android/media/session/MediaController) 取得当前播放的媒体信息

@@ -1,30 +1,35 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
 }
 
 android {
     namespace "cn.binbin323.statuslyricext"
-    compileSdkVersion 31
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId "cn.binbin323.statuslyricext"
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 4
-        versionName "1.0.6"
+        minSdkVersion 31
+        targetSdkVersion 36
+        versionCode 5
+        versionName "2.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     packaging {
@@ -43,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24"
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
