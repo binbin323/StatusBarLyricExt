@@ -1,4 +1,4 @@
-package io.baolong24.statuslyricext.provider.utils;
+package cn.binbin323.statuslyricext.provider.utils;
 
 import android.media.MediaMetadata;
 import android.text.TextUtils;
@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
-import io.baolong24.statuslyricext.misc.checkStringLang;
+import cn.binbin323.statuslyricext.misc.checkStringLang;
 
 public class LyricSearchUtil {
 

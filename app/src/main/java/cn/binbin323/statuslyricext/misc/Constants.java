@@ -1,4 +1,4 @@
-package io.baolong24.statuslyricext.misc;
+package cn.binbin323.statuslyricext.misc;
 
 public class Constants {
     public static final String SHARED_PREFERENCES_NAME = "preferences";

@@ -1,4 +1,4 @@
-package io.baolong24.statuslyricext;
+package cn.binbin323.statuslyricext;
 
 import android.content.Context;
 import android.media.MediaMetadata;
@@ -11,11 +11,11 @@ import java.security.NoSuchAlgorithmException;
 
 import cn.zhaiyifan.lyric.LyricUtils;
 import cn.zhaiyifan.lyric.model.Lyric;
-import io.baolong24.statuslyricext.provider.ILrcProvider;
-import io.baolong24.statuslyricext.provider.KugouProvider;
-import io.baolong24.statuslyricext.provider.NeteaseProvider;
-import io.baolong24.statuslyricext.provider.QQMusicProvider;
-import io.baolong24.statuslyricext.provider.utils.LyricSearchUtil;
+import cn.binbin323.statuslyricext.provider.ILrcProvider;
+import cn.binbin323.statuslyricext.provider.KugouProvider;
+import cn.binbin323.statuslyricext.provider.NeteaseProvider;
+import cn.binbin323.statuslyricext.provider.QQMusicProvider;
+import cn.binbin323.statuslyricext.provider.utils.LyricSearchUtil;
 
 public class LrcGetter {
 

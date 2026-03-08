@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace "io.baolong24.statuslyricext"
+    namespace "cn.binbin323.statuslyricext"
     compileSdkVersion 31
 
     defaultConfig {
-        applicationId "io.baolong24.statuslyricext"
+        applicationId "cn.binbin323.statuslyricext"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 4

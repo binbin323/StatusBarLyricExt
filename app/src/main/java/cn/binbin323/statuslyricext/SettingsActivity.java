@@ -1,4 +1,4 @@
-package io.baolong24.statuslyricext;
+package cn.binbin323.statuslyricext;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.baolong24.statuslyricext.misc.Constants;
+import cn.binbin323.statuslyricext.misc.Constants;
 
 public class SettingsActivity extends FragmentActivity {
 

@@ -1,4 +1,4 @@
-package io.baolong24.statuslyricext.misc;
+package cn.binbin323.statuslyricext.misc;
 
 import java.util.HashSet;
 import java.util.Set;
