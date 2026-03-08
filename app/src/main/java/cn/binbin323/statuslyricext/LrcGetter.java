@@ -12,17 +12,13 @@ import java.security.NoSuchAlgorithmException;
 import cn.zhaiyifan.lyric.LyricUtils;
 import cn.zhaiyifan.lyric.model.Lyric;
 import cn.binbin323.statuslyricext.provider.ILrcProvider;
-import cn.binbin323.statuslyricext.provider.KugouProvider;
-import cn.binbin323.statuslyricext.provider.NeteaseProvider;
-import cn.binbin323.statuslyricext.provider.QQMusicProvider;
+import cn.binbin323.statuslyricext.provider.BinLrcProvider;
 import cn.binbin323.statuslyricext.provider.utils.LyricSearchUtil;
 
 public class LrcGetter {
 
     private static final ILrcProvider[] providers = {
-            new KugouProvider(),
-            new QQMusicProvider(),
-            new NeteaseProvider()
+            new BinLrcProvider()
     };
 
     private static MessageDigest messageDigest;
