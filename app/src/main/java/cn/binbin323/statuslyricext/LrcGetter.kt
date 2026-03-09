@@ -5,13 +5,19 @@ import android.media.MediaMetadata
 import android.text.TextUtils
 import android.util.Log
 import cn.binbin323.statuslyricext.provider.BinLrcProvider
+import cn.binbin323.statuslyricext.provider.ILrcProvider
+import cn.binbin323.statuslyricext.provider.KugouProvider
 import cn.binbin323.statuslyricext.provider.NeteaseProvider
+import cn.binbin323.statuslyricext.provider.QQMusicProvider
 import cn.binbin323.statuslyricext.provider.utils.LyricSearchUtil
 import cn.zhaiyifan.lyric.LyricUtils
 import cn.zhaiyifan.lyric.model.Lyric
 import java.io.File
 import java.io.FileOutputStream
 import java.security.MessageDigest
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
 object LrcGetter {
 
@@ -19,6 +25,9 @@ object LrcGetter {
     private val HEX = "0123456789ABCDEF".toCharArray()
     private val sNeteaseProvider = NeteaseProvider()
     private val sBinProvider = BinLrcProvider()
+    private val sQQMusicProvider = QQMusicProvider()
+    private val sKugouProvider = KugouProvider()
+    private val sExecutor = Executors.newCachedThreadPool()
 
     fun getLyric(context: Context, metadata: MediaMetadata): Lyric? {
         val title = metadata.getString(MediaMetadata.METADATA_KEY_TITLE)
@@ -42,25 +51,45 @@ object LrcGetter {
             cacheFile.delete()
         }
 
-        // Fetch from provider: Netease first, fall back to Bin
-        val result = try {
-            val netease = sNeteaseProvider.getLyric(metadata)
-            if (netease != null && LyricSearchUtil.isLyricContent(netease.mLyric)) {
-                Log.i(TAG, "netease provider success for: $title")
-                netease
-            } else {
-                Log.i(TAG, "netease provider returned nothing, falling back to bin for: $title")
-                sBinProvider.getLyric(metadata)
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "netease provider failed, falling back to bin for: $title", e)
-            try {
-                sBinProvider.getLyric(metadata)
-            } catch (e2: Exception) {
-                Log.e(TAG, "bin provider also failed for: $title", e2)
-                return null
+        // Query all four providers in parallel, pick the best match (lowest distance)
+        val providers: List<Pair<String, ILrcProvider>> = listOf(
+            "netease" to sNeteaseProvider,
+            "bin" to sBinProvider,
+            "qqmusic" to sQQMusicProvider,
+            "kugou" to sKugouProvider
+        )
+        val futures: List<Pair<String, Future<ILrcProvider.LyricResult?>>> = providers.map { (name, provider) ->
+            name to sExecutor.submit<ILrcProvider.LyricResult?> {
+                try {
+                    provider.getLyric(metadata)
+                } catch (e: Exception) {
+                    Log.w(TAG, "$name provider failed for: $title", e)
+                    null
+                }
             }
         }
+
+        val result = futures
+            .mapNotNull { (name, future) ->
+                try {
+                    val res = future.get(5, TimeUnit.SECONDS)
+                    if (res != null && LyricSearchUtil.isLyricContent(res.mLyric)) {
+                        Log.i(TAG, "$name provider returned result (distance=${res.mDistance}) for: $title")
+                        name to res
+                    } else {
+                        Log.i(TAG, "$name provider returned no valid lyric for: $title")
+                        null
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "waiting for provider result failed for: $title", e)
+                    null
+                }
+            }
+            .minByOrNull { (_, res) -> res.mDistance }
+            ?.also { (name, res) ->
+                Log.i(TAG, "best provider: $name (distance=${res.mDistance}) for: $title")
+            }
+            ?.second
 
         if (result == null || !LyricSearchUtil.isLyricContent(result.mLyric)) {
             Log.i(TAG, "no valid lyric for: $title")
