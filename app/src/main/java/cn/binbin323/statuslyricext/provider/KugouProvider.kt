@@ -2,7 +2,6 @@ package cn.binbin323.statuslyricext.provider
 
 import android.media.MediaMetadata
 import android.util.Base64
-import android.util.Log
 import org.json.JSONArray
 import org.json.JSONException
 import cn.binbin323.statuslyricext.provider.utils.HttpRequestUtil
@@ -24,47 +23,37 @@ class KugouProvider : ILrcProvider {
     override fun getLyric(data: MediaMetadata): ILrcProvider.LyricResult? {
         val searchKey = LyricSearchUtil.getSearchKey(data)
         val searchUrl = String.format(KUGOU_SEARCH_URL_FORMAT, searchKey)
-        Log.i(TAG, "searchUrl: $searchUrl")
         return try {
             val searchResult = HttpRequestUtil.getJsonResponse(searchUrl) ?: run {
                 Log.w(TAG, "searchResult is null")
                 return null
             }
             val searchStatus = searchResult.getInt("status")
-            Log.i(TAG, "searchResult status: $searchStatus")
             if (searchStatus != 1) return null
 
             val infoArray = searchResult.getJSONObject("data").getJSONArray("info")
-            Log.i(TAG, "infoArray length: ${infoArray.length()}")
             val (hash, distance) = getBestHash(infoArray, data)
-            Log.i(TAG, "bestHash: $hash, distance: $distance")
             if (hash.isEmpty()) return null
 
             val lyricSearchUrl = String.format(KUGOU_LYRIC_SEARCH_URL_FORMAT, searchKey, hash)
-            Log.i(TAG, "lyricSearchUrl: $lyricSearchUrl")
             val lyricSearchResult = HttpRequestUtil.getJsonResponse(lyricSearchUrl) ?: run {
                 Log.w(TAG, "lyricSearchResult is null")
                 return null
             }
             val lyricSearchStatus = lyricSearchResult.getLong("status")
-            Log.i(TAG, "lyricSearchResult status: $lyricSearchStatus")
             if (lyricSearchStatus != 200L) return null
 
             val candidates = lyricSearchResult.getJSONArray("candidates")
-            Log.i(TAG, "candidates length: ${candidates.length()}")
             if (candidates.length() == 0) return null
             val (id, accessKey) = getBestCandidate(candidates, data)
-            Log.i(TAG, "bestCandidate id: $id, accessKey: $accessKey")
             if (id.isEmpty()) return null
 
             val lrcUrl = String.format(KUGOU_LRC_URL_FORMAT, id, accessKey)
-            Log.i(TAG, "lrcUrl: $lrcUrl")
             val lrcJson = HttpRequestUtil.getJsonResponse(lrcUrl) ?: run {
                 Log.w(TAG, "lrcJson is null")
                 return null
             }
             val lyric = String(Base64.decode(lrcJson.getString("content"), Base64.DEFAULT), Charsets.UTF_8)
-            Log.i(TAG, "lyric length: ${lyric.length}")
             ILrcProvider.LyricResult(mLyric = lyric, mDistance = distance)
         } catch (e: JSONException) {
             Log.e(TAG, "JSON parse error", e)
