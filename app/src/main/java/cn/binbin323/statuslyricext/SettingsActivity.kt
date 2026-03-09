@@ -148,11 +148,9 @@ class SettingsActivity : FragmentActivity() {
                 false
             }
             val aviumSupported = try {
-                val cls = Class.forName("android.os.SystemProperties")
-                val get = cls.getMethod("get", String::class.java, String::class.java)
-                val value = get.invoke(null, "ro.avium.version", "") as String
-                value.isNotEmpty()
-            } catch (e: Exception) {
+                requireContext().packageManager.getPackageInfo("org.avium.alivenotifscore", 0)
+                true
+            } catch (_: PackageManager.NameNotFoundException) {
                 false
             }
             val supported = tickerFlagSupported || aviumSupported

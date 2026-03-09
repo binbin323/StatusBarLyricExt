@@ -211,11 +211,9 @@ class MusicListenerService : NotificationListenerService() {
     }
 
     private fun detectAviumRom(): Boolean = try {
-        val cls = Class.forName("android.os.SystemProperties")
-        val get = cls.getMethod("get", String::class.java, String::class.java)
-        val value = get.invoke(null, "ro.avium.version", "") as String
-        value.isNotEmpty()
-    } catch (e: Exception) {
+        packageManager.getPackageInfo("org.avium.alivenotifscore", 0)
+        true
+    } catch (_: android.content.pm.PackageManager.NameNotFoundException) {
         false
     }
 
