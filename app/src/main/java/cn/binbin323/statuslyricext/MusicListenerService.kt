@@ -35,6 +35,13 @@ class MusicListenerService : NotificationListenerService() {
         private const val TAG = "MusicListenerService"
         private const val NOTIFICATION_ID_LRC = 1
         private const val POLL_INTERVAL_MS = 50L
+
+        // Avium ROM 歌词广播接口
+        private const val AVIUM_ACTION_SHOW_CHIP = "org.avium.systemui.chips.action.SHOW_CHIP"
+        private const val AVIUM_EXTRA_TYPE = "type"
+        private const val AVIUM_EXTRA_TEXT = "text"
+        private const val AVIUM_CHIP_TYPE_MUSIC = 1
+        private const val AVIUM_STATUS_BAR_LYRIC_KEY = "status_bar_show_lyric"
     }
 
     private val mMainHandler = Handler(Looper.getMainLooper())
@@ -57,6 +64,8 @@ class MusicListenerService : NotificationListenerService() {
     private var mFetchingTitle: String? = null
     // Current song title shown in the notification content area.
     private var mCurrentSongTitle: String = ""
+    // Whether the current ROM is Avium (detected once at connect time).
+    private var mIsAviumRom: Boolean = false
 
     // ── Tick runnable ─────────────────────────────────────────────────────────
 
@@ -138,6 +147,12 @@ class MusicListenerService : NotificationListenerService() {
         Log.i(TAG, "onPlaybackStopped")
         mIsPlaying = false
         mMainHandler.removeCallbacks(mTickRunnable)
+        if (mIsAviumRom) {
+            sendBroadcast(Intent(AVIUM_ACTION_SHOW_CHIP).apply {
+                putExtra(AVIUM_EXTRA_TYPE, AVIUM_CHIP_TYPE_MUSIC)
+                putExtra(AVIUM_EXTRA_TEXT, "")
+            })
+        }
         mNotificationManager?.cancel(NOTIFICATION_ID_LRC)
     }
 
@@ -162,6 +177,19 @@ class MusicListenerService : NotificationListenerService() {
     }
 
     private fun postLyricNotification(text: String) {
+        if (mIsAviumRom) {
+            val lyricEnabled = android.provider.Settings.Secure.getInt(
+                contentResolver, AVIUM_STATUS_BAR_LYRIC_KEY, 0
+            ) == 1
+            if (lyricEnabled) {
+                sendBroadcast(Intent(AVIUM_ACTION_SHOW_CHIP).apply {
+                    putExtra(AVIUM_EXTRA_TYPE, AVIUM_CHIP_TYPE_MUSIC)
+                    putExtra(AVIUM_EXTRA_TEXT, text)
+                })
+            }
+            return
+        }
+
         val nm = mNotificationManager ?: return
         val songTitle = mCurrentSongTitle.ifEmpty { text }
 
@@ -180,6 +208,15 @@ class MusicListenerService : NotificationListenerService() {
                 Constants.FLAG_ALWAYS_SHOW_TICKER or
                 Constants.FLAG_ONLY_UPDATE_TICKER
         nm.notify(NOTIFICATION_ID_LRC, notification)
+    }
+
+    private fun detectAviumRom(): Boolean = try {
+        val cls = Class.forName("android.os.SystemProperties")
+        val get = cls.getMethod("get", String::class.java, String::class.java)
+        val value = get.invoke(null, "ro.avium.version", "") as String
+        value.isNotEmpty()
+    } catch (e: Exception) {
+        false
     }
 
     // ── MediaController callbacks ─────────────────────────────────────────────
@@ -255,6 +292,8 @@ class MusicListenerService : NotificationListenerService() {
         Log.i(TAG, "onListenerConnected")
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        mIsAviumRom = detectAviumRom()
+        Log.i(TAG, "isAviumRom=$mIsAviumRom")
         ensureNotificationChannel()
         mMediaSessionManager = getSystemService(Context.MEDIA_SESSION_SERVICE) as MediaSessionManager
         LocalBroadcastManager.getInstance(this).registerReceiver(
