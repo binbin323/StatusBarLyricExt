@@ -140,13 +140,22 @@ class SettingsActivity : FragmentActivity() {
             mEnabledPreference = findPreference(Constants.PREFERENCE_KEY_ENABLED)
 
             // Check ROM support for FLAG_ALWAYS_SHOW_TICKER
-            val supported = try {
+            val tickerFlagSupported = try {
                 android.app.Notification::class.java
                     .getDeclaredField("FLAG_ALWAYS_SHOW_TICKER").getInt(null)
                 true
             } catch (e: Exception) {
                 false
             }
+            val aviumSupported = try {
+                val cls = Class.forName("android.os.SystemProperties")
+                val get = cls.getMethod("get", String::class.java, String::class.java)
+                val value = get.invoke(null, "ro.avium.version", "") as String
+                value.isNotEmpty()
+            } catch (e: Exception) {
+                false
+            }
+            val supported = tickerFlagSupported || aviumSupported
             mEnabledPreference?.let { pref ->
                 if (!supported) {
                     pref.isEnabled = false
