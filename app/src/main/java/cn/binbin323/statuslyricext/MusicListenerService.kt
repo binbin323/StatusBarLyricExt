@@ -251,15 +251,21 @@ class MusicListenerService : NotificationListenerService() {
             mMediaController?.unregisterCallback(mMediaCallback)
             mMediaController = null
 
-            if (controllers.isNullOrEmpty()) return@OnActiveSessionsChangedListener
+if (controllers.isNullOrEmpty()) {
+            onPlaybackStopped()
+            return@OnActiveSessionsChangedListener
+        }
 
-            var best: MediaController? = null
-            for (c in controllers) {
-                if (mIgnoredPackageList.contains(c.packageName)) continue
-                if (getControllerState(c) == PlaybackState.STATE_PLAYING) { best = c; break }
-                if (best == null) best = c
-            }
-            best ?: return@OnActiveSessionsChangedListener
+        var best: MediaController? = null
+        for (c in controllers) {
+            if (mIgnoredPackageList.contains(c.packageName)) continue
+            if (getControllerState(c) == PlaybackState.STATE_PLAYING) { best = c; break }
+            if (best == null) best = c
+        }
+        if (best == null) {
+            onPlaybackStopped()
+            return@OnActiveSessionsChangedListener
+        }
 
             Log.i(TAG, "binding to: ${best.packageName}")
             mMediaController = best
