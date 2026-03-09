@@ -137,7 +137,6 @@ class MusicListenerService : NotificationListenerService() {
     private fun onPlaybackStarted() {
         Log.i(TAG, "onPlaybackStarted")
         mIsPlaying = true
-        mLastDisplayedFromTime = -1L
         mCurrentSentenceIndex = 0
         mMainHandler.removeCallbacks(mTickRunnable)
         mMainHandler.post(mTickRunnable)
