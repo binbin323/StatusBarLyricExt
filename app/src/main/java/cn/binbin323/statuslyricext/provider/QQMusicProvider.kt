@@ -11,11 +11,11 @@ class QQMusicProvider : ILrcProvider {
 
     companion object {
         private const val QM_BASE_URL = "https://c.y.qq.com/"
-        private const val QM_REFERER = "https://y.qq.com"
+        private const val QM_REFERER = "https://y.qq.com/portal/player.html"
         private const val QM_SEARCH_URL_FORMAT =
-            "${QM_BASE_URL}soso/fcgi-bin/client_search_cp?w=%s&format=json"
+            "${QM_BASE_URL}soso/fcgi-bin/music_search_new_platform?w=%s&format=json"
         private const val QM_LRC_URL_FORMAT =
-            "${QM_BASE_URL}lyric/fcgi-bin/fcg_query_lyric_yqq.fcg?songmid=%s&format=json"
+            "${QM_BASE_URL}lyric/fcgi-bin/fcg_query_lyric_new.fcg?songmid=%s&format=json&nobase64=1"
     }
 
     override fun getLyric(data: MediaMetadata): ILrcProvider.LyricResult? {

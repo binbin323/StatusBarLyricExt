@@ -53,10 +53,10 @@ object LrcGetter {
 
         // Query all four providers in parallel, pick the best match (lowest distance)
         val providers: List<Pair<String, ILrcProvider>> = listOf(
-            "netease" to sNeteaseProvider,
             "bin" to sBinProvider,
-            "qqmusic" to sQQMusicProvider,
-            "kugou" to sKugouProvider
+            //"qqmusic" to sQQMusicProvider,
+            "kugou" to sKugouProvider,
+            "netease" to sNeteaseProvider
         )
         val futures: List<Pair<String, Future<ILrcProvider.LyricResult?>>> = providers.map { (name, provider) ->
             name to sExecutor.submit<ILrcProvider.LyricResult?> {
