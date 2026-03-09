@@ -29,7 +29,7 @@ class SettingsActivity : FragmentActivity() {
 
     companion object {
         private val URL_MAP = mapOf(
-            "app" to "https://github.com/baolong24/StatusBarLyricExt",
+            "app" to "https://github.com/binbin323/StatusBarLyricExt",
             "lyricview" to "https://github.com/markzhai/LyricView"
         )
         private const val REQUEST_CODE_MEDIA_PERMISSION = 1001
