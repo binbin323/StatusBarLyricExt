@@ -5,6 +5,7 @@ import android.media.MediaMetadata
 import android.text.TextUtils
 import android.util.Log
 import cn.binbin323.statuslyricext.provider.BinLrcProvider
+import cn.binbin323.statuslyricext.provider.NeteaseProvider
 import cn.binbin323.statuslyricext.provider.utils.LyricSearchUtil
 import cn.zhaiyifan.lyric.LyricUtils
 import cn.zhaiyifan.lyric.model.Lyric
@@ -16,7 +17,8 @@ object LrcGetter {
 
     private const val TAG = "LrcGetter"
     private val HEX = "0123456789ABCDEF".toCharArray()
-    private val sProvider = BinLrcProvider()
+    private val sNeteaseProvider = NeteaseProvider()
+    private val sBinProvider = BinLrcProvider()
 
     fun getLyric(context: Context, metadata: MediaMetadata): Lyric? {
         val title = metadata.getString(MediaMetadata.METADATA_KEY_TITLE)
@@ -40,12 +42,24 @@ object LrcGetter {
             cacheFile.delete()
         }
 
-        // Fetch from provider
+        // Fetch from provider: Netease first, fall back to Bin
         val result = try {
-            sProvider.getLyric(metadata)
+            val netease = sNeteaseProvider.getLyric(metadata)
+            if (netease != null && LyricSearchUtil.isLyricContent(netease.mLyric)) {
+                Log.i(TAG, "netease provider success for: $title")
+                netease
+            } else {
+                Log.i(TAG, "netease provider returned nothing, falling back to bin for: $title")
+                sBinProvider.getLyric(metadata)
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "getLyric failed for: $title", e)
-            return null
+            Log.w(TAG, "netease provider failed, falling back to bin for: $title", e)
+            try {
+                sBinProvider.getLyric(metadata)
+            } catch (e2: Exception) {
+                Log.e(TAG, "bin provider also failed for: $title", e2)
+                return null
+            }
         }
 
         if (result == null || !LyricSearchUtil.isLyricContent(result.mLyric)) {
