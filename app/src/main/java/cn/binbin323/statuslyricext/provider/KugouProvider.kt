@@ -2,6 +2,7 @@ package cn.binbin323.statuslyricext.provider
 
 import android.media.MediaMetadata
 import android.util.Base64
+import android.util.Log
 import org.json.JSONArray
 import org.json.JSONException
 import cn.binbin323.statuslyricext.provider.utils.HttpRequestUtil

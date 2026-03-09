@@ -22,6 +22,9 @@
         <Preference
             android:key="lyricview"
             android:title="LyricView" />
+        <Preference
+            android:key="lyric_adapt_request"
+            android:title="@string/lyric_adapt_request" />
     </PreferenceCategory>
 
 </PreferenceScreen>
