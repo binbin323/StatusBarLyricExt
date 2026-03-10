@@ -69,7 +69,7 @@ object LrcGetter {
             }
         }
 
-        val result = futures
+        val validResults = futures
             .mapNotNull { (name, future) ->
                 try {
                     val res = future.get(5, TimeUnit.SECONDS)
@@ -85,10 +85,11 @@ object LrcGetter {
                     null
                 }
             }
-            .minByOrNull { (_, res) -> res.mDistance }
-            ?.also { (name, res) ->
-                Log.i(TAG, "best provider: $name (distance=${res.mDistance}) for: $title")
-            }
+
+        val result = (validResults.firstOrNull { (name, _) -> name == "bin" }
+            ?.also { (_, res) -> Log.i(TAG, "bin provider found lyric, forcing bin (distance=${res.mDistance}) for: $title") }
+            ?: validResults.minByOrNull { (_, res) -> res.mDistance }
+                ?.also { (name, res) -> Log.i(TAG, "best provider: $name (distance=${res.mDistance}) for: $title") })
             ?.second
 
         if (result == null || !LyricSearchUtil.isLyricContent(result.mLyric)) {
