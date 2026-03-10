@@ -1,4 +1,4 @@
-package io.baolong24.statuslyricext;
+package cn.binbin323.statuslyricext;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("io.baolong24.statuslyricext", appContext.getPackageName());
+        assertEquals("cn.binbin323.statuslyricext", appContext.getPackageName());
     }
 }
