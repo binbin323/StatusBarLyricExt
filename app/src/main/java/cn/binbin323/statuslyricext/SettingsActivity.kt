@@ -23,6 +23,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import cn.binbin323.statuslyricext.misc.Constants
+import cn.binbin323.statuslyricext.misc.UpdateChecker
 import java.lang.reflect.Field
 
 class SettingsActivity : FragmentActivity() {
@@ -81,6 +82,7 @@ class SettingsActivity : FragmentActivity() {
         }
 
         requestMediaPermissionIfNeeded()
+        UpdateChecker.check(this)
     }
 
     private fun requestMediaPermissionIfNeeded() {

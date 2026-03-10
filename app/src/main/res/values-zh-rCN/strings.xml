@@ -11,4 +11,11 @@
     <string name="ignored_apps_title">忽略应用</string>
     <string name="unsupport_rom_summary">不支持当前 ROM</string>
     <string name="unsupport_rom_title">不支持</string>
+
+    <!-- Update -->
+    <string name="update_available_title">发现新版本</string>
+    <string name="update_available_message">有新版本可用。</string>
+    <string name="update_new_version">新版本：%1$s</string>
+    <string name="update_download">下载更新</string>
+    <string name="update_later">稍后再说</string>
 </resources>
