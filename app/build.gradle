@@ -11,8 +11,8 @@ android {
         applicationId "cn.binbin323.statuslyricext"
         minSdkVersion 31
         targetSdkVersion 36
-        versionCode 8
-        versionName "2.0.3"
+        versionCode 9
+        versionName "2.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
