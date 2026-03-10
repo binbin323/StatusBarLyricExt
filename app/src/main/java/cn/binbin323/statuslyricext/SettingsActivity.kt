@@ -31,7 +31,7 @@ class SettingsActivity : FragmentActivity() {
         private val URL_MAP = mapOf(
             "app" to "https://github.com/binbin323/StatusBarLyricExt",
             "lyricview" to "https://github.com/markzhai/LyricView",
-            "lyric_adapt_request" to "https://blog.dhao.cc/slc"
+            "lyric_adapt_request" to "https://sms.dhao.cc"
         )
         private const val REQUEST_CODE_MEDIA_PERMISSION = 1001
 
